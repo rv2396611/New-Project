@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProductHub Lite</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="js/auth.js"></script>
+
+</head>
+
+<body>
+
+    <header class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">
+                    PH
+                </div>
+                <span class="font-semibold text-lg">ProductHub Lite</span>
+            </a>
+
+            <nav class="flex items-center gap-6 text-sm">
+                <a href="index.html" class="hover:text-black text-slate-600">Home</a>
+                <a href="about.html" class="hover:text-black text-slate-600">About</a>
+
+                <span id="guestLinks" class="flex gap-4">
+                    <a href="login.html" class="hover:text-black text-slate-600">Login</a>
+                    <a href="register.html" class="hover:text-black text-slate-600">Register</a>
+                </span>
+
+                <span id="userLinks" class="hidden flex gap-4 items-center">
+                    <button id="cartBtn" class="relative bg-slate-900 text-white px-4 py-2 rounded-lg">
+                        Cart <span id="cartBadge" class="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs px-2 py-0.5 rounded-full hidden"> 0 </span>
+                </button>
+                <span id="userEmail" class="text-slate-600 text-sm"></span>
+                <button id="logoutBtn" class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm">
+                    Logout
+                    </button>
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN -->
+    <main>
+
+        <div class="bg-slate100 p-8 text-center">
+            <div class="bg-white rounded-lg shadow-lg p-8 max-w-3xl mx-auto">
+                <h2 class="text-4xl font-bold mb-4">Welcome to Our Website</h2>
+                <p class="text-gray-700 mb-6">Discover amazing content and connect with a vibrant community. Join us today and start your journey!</p>
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Get Started
+                </button>
+            </div>
+        </div>
+
+        <section class=" bg-slate100 mt-4 p-8 max-w-6xl mx-auto">
+            <div class="flex items-center justify-between mb-5">
+                <h2 class="text-2xl font-semibold">Featured Products</h2>
+            </div>
+
+            <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            </div>
+        </section>
+    </main>
+
+    <!-- CART OVERLAY -->
+    <div id="cartOverlay" class="fixed inset-0 bg-black/40 hidden z-40"></div>
+
+    <!-- CART DRAWER -->
+    <aside id="cartDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white border-l
+         translate-x-full transition-transform duration-300 z-50">
+
+        <div class="p-5 border-b flex justify-between items-center">
+            <h3 class="text-lg font-semibold">Your Cart</h3>
+            <button id="closeCart" class="text-sm underline">Close</button>
+        </div>
+
+        <div id="cartItems" class="p-5 space-y-4 flex-1 overflow-y-auto"></div>
+
+        <div class="p-5 border-t space-y-4">
+            <div class="flex justify-between font-semibold text-lg">
+                <span>Total</span>
+                <span id="cartTotal">$0</span>
+            </div>
+
+            <button class="w-full bg-emerald-600 text-white py-2.5 rounded-lg">
+      Checkout
+    </button>
+
+            <button id="clearCart" class="w-full border py-2.5 rounded-lg text-sm">
+      Clear Cart
+    </button>
+        </div>
+    </aside>
+
+    <!-- SCRIPTS -->
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/cart.js"></script>
+
+
+</body>
+
+</html>

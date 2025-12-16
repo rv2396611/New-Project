@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | ProductHub Lite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/auth.js"></script>
+</head>
+<body class="bg-slate-50">
+
+  <!-- Header -->
+   <header class="bg-white border-b sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+
+            <a href="index.html" class="flex items-center gap-2">
+                <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">
+                    PH
+                </div>
+                <span class="font-semibold text-lg">ProductHub Lite</span>
+            </a>
+
+             <nav class="flex items-center gap-6 text-sm">
+                <a href="index.html" class="hover:text-black text-slate-600">Home</a>
+                <a href="about.html" class="hover:text-black text-slate-600">About</a>
+
+                <span id="guestLinks" class="flex gap-4">
+                    <a href="login.html" class="hover:text-black text-slate-600">Login</a>
+                    <a href="register.html" class="hover:text-black text-slate-600">Register</a>
+                </span>
+
+                <span id="userLinks" class="hidden flex gap-4 items-center">
+                    <span id="userEmail" class="text-slate-600 text-sm"></span>
+                    <button id="logoutBtn"
+                    class="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm">
+                    Logout
+                    </button>
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="min-h-screen grid place-items-center px-4">
+        <form id="registerForm"
+        class="bg-white border rounded-2xl p-6 w-full max-w-md shadow">
+        <h2 class="text-xl font-semibold mb-4">Register</h2>
+
+        <input type="fullName" id="fullName" required placeholder="Full Name"
+            class="w-full border rounded-lg px-4 py-2 mb-3">
+        
+        <input type="email" id="email" required placeholder="Email"
+            class="w-full border rounded-lg px-4 py-2 mb-3">
+        
+
+        <input type="password" id="password" required placeholder="Password"
+            class="w-full border rounded-lg px-4 py-2 mb-4">
+
+        <input type="cnfPassword" id="cnfPassword" required placeholder="Confirm Password"
+            class="w-full border rounded-lg px-4 py-2 mb-4">
+
+        <button
+            class="w-full bg-slate-900 text-white py-2 rounded-lg">
+            Register
+        </button>
+        </form>
+    </main>
+
+  <script>
+    document.getElementById("registerForm")
+    .addEventListener("submit", e => {
+      e.preventDefault();
+      
+      register();
+      window.location.href = "index.html";
+    });
+  </script>
+
+</body>
+</html>
