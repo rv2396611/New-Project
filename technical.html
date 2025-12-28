@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Technical Docs | Tasty Buds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="auth.js"></script>
+  <style>
+    body {
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.08), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(16,185,129,0.12), transparent 28%),
+                  linear-gradient(180deg, #0b1224 0%, #0f172a 32%, #0f172a 100%);
+      color: #0f172a;
+    }
+    .card-surface {
+      background: #ffffff;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.14);
+    }
+    pre {
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 16px;
+      border-radius: 12px;
+      overflow: auto;
+    }
+    code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+    .callout { border-left: 4px solid #10b981; background: #ecfdf5; padding: 12px; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <header class="bg-white/95 backdrop-blur border-b sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">TB</div>
+        <span class="font-bold text-lg">Tasty Buds</span>
+      </a>
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="index.html" class="hover:text-black text-slate-600">Home</a>
+        <a href="about.html" class="hover:text-black text-slate-600">About</a>
+        <a href="orders.html" class="hover:text-black text-slate-600">Orders</a>
+        <a href="technical.html" class="hover:text-black text-slate-900 font-semibold">Docs</a>
+        <span id="userEmail" class="text-slate-600 text-sm"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="card-surface rounded-3xl p-8 sm:p-10 text-slate-900">
+      <h1 class="text-3xl font-bold mb-2">Tasty Buds Technical Documentation</h1>
+      <p class="text-slate-600 mb-6">Architecture overview, API reference, data model, and integration notes.</p>
+
+      <section class="mb-8">
+        <h2 class="text-xl font-semibold mb-3">Table of Contents</h2>
+        <ul class="list-disc ml-5 space-y-1 text-slate-700">
+          <li><a href="#overview" class="text-emerald-700">Overview</a></li>
+          <li><a href="#architecture" class="text-emerald-700">Architecture</a></li>
+          <li><a href="#data-model" class="text-emerald-700">Data Model</a></li>
+          <li><a href="#api" class="text-emerald-700">API Reference</a></li>
+          <li><a href="#flows" class="text-emerald-700">Auth & Payment Flows</a></li>
+          <li><a href="#cart" class="text-emerald-700">Cart & Orders</a></li>
+          <li><a href="#samples" class="text-emerald-700">Code Samples</a></li>
+          <li><a href="#run" class="text-emerald-700">Run & Test</a></li>
+        </ul>
+      </section>
+
+      <section id="overview" class="mb-10">
+        <h2 class="text-2xl font-bold mb-3">Overview</h2>
+        <p class="text-slate-700">Tasty Buds is a demo food ordering app with simple authentication, product browsing, cart management, checkout, and order history. The stack uses vanilla HTML/CSS/JS on the client and Node.js/Express on the server.</p>
+        <div class="callout mt-3 text-sm text-slate-700">This project focuses on clear flows and masked payment storage (last 4 digits, brand, expiry). No real payment processing is performed.</div>
+      </section>
+
+      <section id="architecture" class="mb-10">
+        <h2 class="text-2xl font-bold mb-3">Architecture</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-semibold mb-2">Frontend</h3>
+            <ul class="list-disc ml-5 space-y-1 text-slate-700">
+              <li>Pages: <span class="font-mono">index.html</span>, <span class="font-mono">about.html</span>, <span class="font-mono">login.html</span>, <span class="font-mono">register.html</span>, <span class="font-mono">payment.html</span>, <span class="font-mono">orders.html</span>, <span class="font-mono">technical.html</span></li>
+              <li>Scripts: <span class="font-mono">auth.js</span> (session helpers), <span class="font-mono">app.js</span> (menu rendering), <span class="font-mono">cart.js</span> (cart UI/logic)</li>
+              <li>Styling: Tailwind CDN, custom gradients; primary font is Space Grotesk</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">Backend</h3>
+            <ul class="list-disc ml-5 space-y-1 text-slate-700">
+              <li><span class="font-mono">server.js</span>: Express server with CORS + JSON</li>
+              <li>Auth endpoints: register and login using Argon2 password hashing</li>
+              <li>Payment endpoints: masked storage only in <span class="font-mono">users.json</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="data-model" class="mb-10">
+        <h2 class="text-2xl font-bold mb-3">Data Model</h2>
+        <ul class="list-disc ml-5 space-y-2 text-slate-700">
+          <li>LocalStorage keys:
+            <ul class="list-disc ml-5 mt-1 space-y-1">
+              <li><span class="font-mono">ph_session</span>: client session flag (email stored via <span class="font-mono">getUser()</span>)</li>
+              <li><span class="font-mono">ph_cart</span>: map of productId → quantity</li>
+              <li><span class="font-mono">ph_orders</span>: array of orders { id, email, createdAt, items[], total }</li>
+            </ul>
+          </li>
+          <li>Server file: <span class="font-mono">users.json</span> stores users and masked <span class="font-mono">payment</span> details</li>
+        </ul>
+      </section>
+
+      <section id="api" class="mb-10">
+        <h2 class="text-2xl font-bold mb-3">API Reference</h2>
+        <div class="space-y-6">
+          <div>
+            <h3 class="font-semibold">POST /api/register</h3>
+            <p class="text-slate-700 text-sm">Body: { email, password, fullName? } → 201 { email }</p>
+            <pre><code class="language-json">{
+  "email": "user@example.com",
+  "password": "secret123",
+  "fullName": "Jane Doe"
+}
+</code></pre>
+          </div>
+          <div>
+            <h3 class="font-semibold">POST /api/login</h3>
+            <p class="text-slate-700 text-sm">Body: { email, password } → 200 { email }</p>
+          </div>
+          <div>
+            <h3 class="font-semibold">GET /api/payment?email=...</h3>
+            <p class="text-slate-700 text-sm">Returns masked payment { cardholderName, brand, last4, expMonth, expYear }</p>
+          </div>
+          <div>
+            <h3 class="font-semibold">POST /api/payment</h3>
+            <p class="text-slate-700 text-sm">Body: { email, payment } → 200 { ok: true }</p>
+            <pre><code class="language-json">{
+  "email": "user@example.com",
+  "payment": {
+    "cardholderName": "Jane Doe",
+    "brand": "Visa",
+    "last4": "4242",
+    "expMonth": 12,
+    "expYear": 2027
+  }
+}
+</code></pre>
+        </div>
+      </section>
+
+      <section id="flows" class="mb-10">
+        <h2 class="text-2xl font-bold mb-3">Auth & Payment Flows</h2>
+        <ol class="list-decimal ml-5 space-y-2 text-slate-700">
+          <li>Register → server hashes password via Argon2 → stores user</li>
+          <li>Login → verifies hash → client sets session and user email</li>
+          <li>Payment page loads cart summary; form validates (Luhn, expiry, CVV)</li>
+          <li>Masked payment saved; Pay Now gates on valid form and non-empty cart</li>
+        </ol>
+      </section>
+
+      <section id="cart" class="mb-10">
+        <h2 class="text-2xl font-bold mb-3">Cart & Orders</h2>
+        <p class="text-slate-700">Cart lives in <span class="font-mono">ph_cart</span>. On Pay Now, an order is created and stored in <span class="font-mono">ph_orders</span>; order history is filtered per-user in Orders page.</p>
+        <pre><code>// Example order shape
+{
+  id: "ORD-1735334400000",
+  email: "user@example.com",
+  createdAt: "2025-12-27T10:00:00.000Z",
+  items: [ { id: "food-001", name: "Masala Dosa", qty: 2, line: 240 } ],
+  total: 240
+}
+</code></pre>
+      </section>
+
+      <section id="samples" class="mb-10">
+        <h2 class="text-2xl font-bold mb-3">Code Samples</h2>
+        <h3 class="font-semibold">Fetch register</h3>
+        <pre><code>await fetch('http://127.0.0.1:3000/api/register', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email: 'user@example.com', password: 'secret123' })
+});
+</code></pre>
+        <h3 class="font-semibold mt-4">Fetch masked payment save</h3>
+        <pre><code>await fetch('http://127.0.0.1:3000/api/payment', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    email: 'user@example.com',
+    payment: { cardholderName: 'Jane Doe', brand: 'Visa', last4: '4242', expMonth: 12, expYear: 2027 }
+  })
+});
+</code></pre>
+      </section>
+
+      <section id="run" class="mb-4">
+        <h2 class="text-2xl font-bold mb-3">Run & Test</h2>
+        <p class="text-slate-700">Start the server, then open pages via a simple file server or your editor's Live Preview.</p>
+        <pre><code class="language-bash">node server.js
+# Register, login, then try payment and orders locally
+</code></pre>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = (typeof getUser === 'function') ? getUser() : null;
+      const ue = document.getElementById('userEmail');
+      if (ue && user && user.email) ue.textContent = user.email;
+    });
+  </script>
+</body>
+</html>
