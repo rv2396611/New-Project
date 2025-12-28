@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orders | Tasty Buds</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+  <style>
+    body {
+      font-family: "Space Grotesk", "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.08), transparent 25%),
+                  radial-gradient(circle at 80% 0%, rgba(16,185,129,0.12), transparent 28%),
+                  linear-gradient(180deg, #0b1224 0%, #0f172a 32%, #0f172a 100%);
+      color: #0f172a;
+    }
+    .card-surface {
+      background: #ffffff;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      box-shadow: 0 25px 60px rgba(15, 23, 42, 0.14);
+    }
+  </style>
+</head>
+<body>
+  <header class="bg-white/95 backdrop-blur border-b sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">TB</div>
+        <span class="font-bold text-lg">Tasty Buds</span>
+      </a>
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="index.html" class="hover:text-black text-slate-600">Home</a>
+        <a href="orders.html" class="hover:text-black text-slate-600">Orders</a>
+        <span id="userEmail" class="text-slate-600 text-sm"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="card-surface rounded-3xl p-8 sm:p-10 text-slate-900">
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-2xl sm:text-3xl font-bold">Your Orders</h1>
+        <button id="clearOrders" class="text-sm text-red-600 hover:text-red-700">Clear order history</button>
+      </div>
+      <div id="ordersList" class="space-y-4"></div>
+    </div>
+  </main>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = localStorage.getItem('ph_session');
+      const user = (typeof getUser === 'function') ? getUser() : null;
+      if (!session || !user) {
+        alert('Please log in to view your orders.');
+        window.location.href = 'login.html';
+        return;
+      }
+      const ue = document.getElementById('userEmail');
+      if (ue && user && user.email) ue.textContent = user.email;
+
+      const ordersList = document.getElementById('ordersList');
+      const clearBtn = document.getElementById('clearOrders');
+
+      function loadOrders() {
+        const all = JSON.parse(localStorage.getItem('ph_orders') || '[]');
+        const mine = all.filter(o => o.email === user.email);
+        if (!mine.length) {
+          ordersList.innerHTML = '<p class="text-slate-500">No orders yet.</p>';
+          return;
+        }
+        ordersList.innerHTML = mine.map(o => {
+          const date = new Date(o.createdAt).toLocaleString();
+          const items = (o.items || []).map(it => `<div class="flex justify-between text-sm"><span>${it.name} × ${it.qty}</span><span>$${it.line}</span></div>`).join('');
+          return `<div class="border border-slate-200 rounded-2xl p-4">
+            <div class="flex justify-between mb-2 text-sm text-slate-600">
+              <span>Order #${o.id}</span><span>${date}</span>
+            </div>
+            <div class="space-y-1 mb-2">${items}</div>
+            <div class="flex justify-between font-semibold">
+              <span>Total</span><span>$${o.total}</span>
+            </div>
+          </div>`;
+        }).join('');
+      }
+
+      clearBtn.onclick = () => {
+        const all = JSON.parse(localStorage.getItem('ph_orders') || '[]');
+        const remaining = all.filter(o => o.email !== user.email);
+        localStorage.setItem('ph_orders', JSON.stringify(remaining));
+        loadOrders();
+      };
+
+      loadOrders();
+    });
+  </script>
+</body>
+</html>

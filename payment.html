@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment | Tasty Buds</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="auth.js"></script>
+  <script src="app.js"></script>
+</head>
+<body class="bg-slate-100">
+  <header class="bg-white/95 backdrop-blur border-b sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">TB</div>
+        <span class="font-bold text-lg">Tasty Buds</span>
+      </a>
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="index.html" class="hover:text-black text-slate-600">Home</a>
+        <a href="orders.html" class="hover:text-black text-slate-600">Orders</a>
+        <span id="userEmail" class="text-slate-600 text-sm"></span>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-10">
+    <div class="grid md:grid-cols-2 gap-8">
+      <section class="bg-white rounded-2xl border p-6 shadow-sm">
+        <h2 class="text-xl font-semibold mb-4">Payment Details</h2>
+        <p class="text-slate-600 text-sm mb-4">We securely store only masked card info (last 4, expiry, brand). Never your full number or CVV.</p>
+        <form id="paymentForm" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium mb-1">Cardholder Name</label>
+            <input id="cardName" type="text" class="w-full border rounded-lg px-3 py-2" placeholder="Jane Doe" required />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Card Number</label>
+            <input id="cardNumber" inputmode="numeric" autocomplete="cc-number" pattern="[0-9\s]{12,19}" class="w-full border rounded-lg px-3 py-2" placeholder="4111 1111 1111 1111" required />
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Expiry (MM/YY)</label>
+              <input id="cardExpiry" inputmode="numeric" autocomplete="cc-exp" pattern="^(0[1-9]|1[0-2])\/(\d{2})$" class="w-full border rounded-lg px-3 py-2" placeholder="12/27" required />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-1">CVV</label>
+              <input id="cardCvv" inputmode="numeric" autocomplete="off" pattern="^\d{3,4}$" class="w-full border rounded-lg px-3 py-2" placeholder="123" required />
+            </div>
+          </div>
+          <button class="w-full bg-emerald-600 text-white py-2.5 rounded-lg">Save & Continue</button>
+        </form>
+      </section>
+
+      <section class="bg-white rounded-2xl border p-6 shadow-sm">
+        <h2 class="text-xl font-semibold mb-4">Summary</h2>
+        <div id="summary" class="space-y-2 text-slate-700"></div>
+        <div class="mt-4 flex justify-between font-semibold">
+          <span>Total</span>
+          <span id="summaryTotal">$0</span>
+        </div>
+        <button id="payNow" class="mt-6 w-full bg-slate-900 text-white py-2.5 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed" disabled>Pay Now</button>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Require auth
+    document.addEventListener('DOMContentLoaded', () => {
+      const session = localStorage.getItem('ph_session');
+      const user = (typeof getUser === 'function') ? getUser() : null;
+      if (!session || !user) {
+        alert('Please log in to proceed to payment.');
+        window.location.href = 'login.html';
+        return;
+      }
+      // Display user email
+      const ue = document.getElementById('userEmail');
+      if (ue && user && user.email) ue.textContent = user.email;
+
+      // Load cart summary
+      const cart = JSON.parse(localStorage.getItem('ph_cart')) || {};
+      const summary = document.getElementById('summary');
+      const totalEl = document.getElementById('summaryTotal');
+      const payNow = document.getElementById('payNow');
+
+      function findProduct(id) {
+        return (typeof Menu !== 'undefined') ? Menu.find(x => x.id === id) : null;
+      }
+      let total = 0;
+      const entries = Object.entries(cart);
+      if (!entries.length) {
+        summary.innerHTML = '<p class="text-slate-500">Your cart is empty.</p>';
+        payNow.disabled = true;
+      } else {
+        summary.innerHTML = entries.map(([id, qty]) => {
+          const p = findProduct(id);
+          const line = p ? p.price * qty : 0;
+          total += line;
+          return `<div class="flex justify-between"><span>${p ? p.name : id} × ${qty}</span><span>$${line}</span></div>`;
+        }).join('');
+      }
+      totalEl.textContent = `$${total}`;
+
+      // Try to fetch saved payment (masked)
+      fetch(`http://127.0.0.1:3000/api/payment?email=${encodeURIComponent(user.email)}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (data && data.payment) {
+            const { cardholderName, brand, last4, expMonth, expYear } = data.payment;
+            document.getElementById('cardName').value = cardholderName || '';
+            document.getElementById('cardNumber').value = brand ? `${brand} •••• •••• •••• ${last4}` : `•••• •••• •••• ${last4}`;
+            document.getElementById('cardExpiry').value = (expMonth && expYear) ? `${String(expMonth).padStart(2,'0')}/${String(expYear).slice(-2)}` : '';
+          }
+        }).catch(() => {});
+
+      // Luhn check (basic)
+      function luhnCheck(num) {
+        const digits = num.replace(/\s+/g,'');
+        let sum = 0; let dbl = false;
+        for (let i = digits.length - 1; i >= 0; i--) {
+          let n = parseInt(digits[i], 10);
+          if (dbl) { n *= 2; if (n > 9) n -= 9; }
+          sum += n; dbl = !dbl;
+        }
+        return (sum % 10) === 0;
+      }
+      function detectBrand(num) {
+        const n = num.replace(/\s+/g,'');
+        if (/^4/.test(n)) return 'Visa';
+        if (/^5[1-5]/.test(n) || /^(22[2-9]|2[3-7]\d|27[01]\d|2720)/.test(n)) return 'Mastercard';
+        return 'Card';
+      }
+
+      // Validate payment form and enable/disable Pay Now
+      function validatePaymentForm() {
+        const name = document.getElementById('cardName').value.trim();
+        const number = document.getElementById('cardNumber').value.replace(/\s+/g,'');
+        const expiry = document.getElementById('cardExpiry').value.trim();
+        const cvv = document.getElementById('cardCvv').value.trim();
+
+        if (!entries.length) {
+          payNow.disabled = true;
+          return false;
+        }
+        if (!name || !number || !expiry || !cvv) {
+          payNow.disabled = true;
+          return false;
+        }
+        if (number.length < 12 || !luhnCheck(number)) {
+          payNow.disabled = true;
+          return false;
+        }
+        const [mm, yy] = expiry.split('/');
+        if (!mm || !yy) {
+          payNow.disabled = true;
+          return false;
+        }
+        const expMonth = parseInt(mm, 10);
+        const expYear = 2000 + parseInt(yy, 10);
+        if (!(expMonth >= 1 && expMonth <= 12) || !(expYear >= new Date().getFullYear())) {
+          payNow.disabled = true;
+          return false;
+        }
+        if (!/^\d{3,4}$/.test(cvv)) {
+          payNow.disabled = true;
+          return false;
+        }
+        payNow.disabled = false;
+        return true;
+      }
+
+      // Add input listeners to validate on change
+      document.getElementById('cardName').addEventListener('input', validatePaymentForm);
+      document.getElementById('cardNumber').addEventListener('input', validatePaymentForm);
+      document.getElementById('cardExpiry').addEventListener('input', validatePaymentForm);
+      document.getElementById('cardCvv').addEventListener('input', validatePaymentForm);
+
+      function detectBrand(num) {
+        const n = num.replace(/\s+/g,'');
+        if (/^4/.test(n)) return 'Visa';
+        if (/^5[1-5]/.test(n) || /^(22[2-9]|2[3-7]\d|27[01]\d|2720)/.test(n)) return 'Mastercard';
+        return 'Card';
+      }
+
+      // Save payment (masked) to server
+      document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('cardName').value.trim();
+        const number = document.getElementById('cardNumber').value.replace(/\s+/g,'');
+        const expiry = document.getElementById('cardExpiry').value.trim();
+        const cvv = document.getElementById('cardCvv').value.trim();
+
+        if (!name || !number || !expiry || !cvv) {
+          alert('Please fill all fields.');
+          return;
+        }
+        if (number.length < 12 || !luhnCheck(number)) {
+          alert('Invalid card number.');
+          return;
+        }
+        const [mm, yy] = expiry.split('/');
+        const expMonth = parseInt(mm, 10);
+        const expYear = 2000 + parseInt(yy, 10);
+        if (!(expMonth >= 1 && expMonth <= 12) || !(expYear >= new Date().getFullYear())) {
+          alert('Invalid expiry.');
+          return;
+        }
+
+        const brand = detectBrand(number);
+        const last4 = number.slice(-4);
+        const payload = {
+          email: user.email,
+          payment: { cardholderName: name, brand, last4, expMonth, expYear }
+        };
+
+        try {
+          const res = await fetch('http://127.0.0.1:3000/api/payment', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (res.ok) {
+            alert('Payment details saved.');
+          } else {
+            alert('Failed to save payment details.');
+          }
+        } catch (err) {
+          alert('Network error saving payment details.');
+        }
+      });
+
+      function buildOrder() {
+        const items = entries.map(([id, qty]) => {
+          const p = findProduct(id);
+          const line = p ? p.price * qty : 0;
+          return { id, name: p ? p.name : id, qty, line };
+        });
+        return {
+          id: `ORD-${Date.now()}`,
+          email: user.email,
+          createdAt: new Date().toISOString(),
+          items,
+          total
+        };
+      }
+
+      function saveOrder(order) {
+        const all = JSON.parse(localStorage.getItem('ph_orders') || '[]');
+        all.push(order);
+        localStorage.setItem('ph_orders', JSON.stringify(all));
+      }
+
+      document.getElementById('payNow').onclick = () => {
+        const valid = validatePaymentForm();
+        if (!valid) {
+          alert('Please complete your payment details first.');
+          return;
+        }
+        const order = buildOrder();
+        saveOrder(order);
+        localStorage.removeItem('ph_cart');
+        alert('Payment processed (demo). Your order is placed!');
+        window.location.href = 'orders.html';
+      };
+    });
+  </script>
+</body>
+</html>

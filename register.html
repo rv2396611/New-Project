@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | ProductHub Lite</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/auth.js"></script>
+    <script src="auth.js"></script>
 </head>
 <body class="bg-slate-50">
 
@@ -15,14 +15,15 @@
 
             <a href="index.html" class="flex items-center gap-2">
                 <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">
-                    PH
+                    TB
                 </div>
-                <span class="font-semibold text-lg">ProductHub Lite</span>
+                <span class="font-semibold text-lg">Tasty Buds</span>
             </a>
 
              <nav class="flex items-center gap-6 text-sm">
                 <a href="index.html" class="hover:text-black text-slate-600">Home</a>
                 <a href="about.html" class="hover:text-black text-slate-600">About</a>
+                     <a href="orders.html" class="hover:text-black text-slate-600">Orders</a>
 
                 <span id="guestLinks" class="flex gap-4">
                     <a href="login.html" class="hover:text-black text-slate-600">Login</a>
@@ -55,7 +56,7 @@
         <input type="password" id="password" required placeholder="Password"
             class="w-full border rounded-lg px-4 py-2 mb-4">
 
-        <input type="cnfPassword" id="cnfPassword" required placeholder="Confirm Password"
+        <input type="Password" id="cnfPassword" required placeholder="Confirm Password"
             class="w-full border rounded-lg px-4 py-2 mb-4">
 
         <button
@@ -65,15 +66,20 @@
         </form>
     </main>
 
-  <script>
-    document.getElementById("registerForm")
-    .addEventListener("submit", e => {
-      e.preventDefault();
-      
-      register();
-      window.location.href = "index.html";
-    });
-  </script>
+        <script>
+        document.getElementById("registerForm")
+        .addEventListener("submit", async e => {
+            e.preventDefault();
+
+            const ok = await register();
+            if (ok) {
+                console.log('Registration succeeded — redirecting in 1.5s');
+                setTimeout(() => window.location.href = "index.html", 1500);
+            } else {
+                console.log('Registration failed');
+            }
+        });
+    </script>
 
 </body>
 </html>

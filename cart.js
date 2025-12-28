@@ -14,17 +14,23 @@ function getCartTotal() {
   let total = 0;
   const cart = getCart();
   for (const [id, qty] of Object.entries(cart)) {
-    const p = PRODUCTS.find(x => x.id === id);
+    const p = Menu.find(x => x.id === id);
     if (p) total += p.price * qty;
   }
   return total;
 }
 
 function addToCart(id) {
+  if (!isAuthed()) {
+    alert('Please log in to add items to your cart.');
+    window.location.href = 'login.html';
+    return;
+  }
   const cart = getCart();
   cart[id] = (cart[id] || 0) + 1;
   saveCart(cart);
   updateCartBadge();
+  alert('Added to cart');
 }
 
 function updateCartBadge() {
@@ -39,8 +45,14 @@ const cartDrawer = document.getElementById("cartDrawer");
 const cartOverlay = document.getElementById("cartOverlay");
 const cartItems = document.getElementById("cartItems");
 const cartTotal = document.getElementById("cartTotal");
+const checkoutBtn = document.getElementById("checkoutBtn");
 
 cartBtn.onclick = () => {
+  if (!isAuthed()) {
+    alert('Please log in to view your cart.');
+    window.location.href = 'login.html';
+    return;
+  }
   cartOverlay.classList.remove("hidden");
   cartDrawer.classList.remove("translate-x-full");
   renderCart();
@@ -65,7 +77,7 @@ function renderCart() {
   }
 
   cartItems.innerHTML = entries.map(([id, qty]) => {
-    const p = PRODUCTS.find(x => x.id === id);
+    const p = Menu.find(x => x.id === id);
     return `
       <div class="border rounded-xl p-4">
         <div class="flex justify-between">
@@ -88,4 +100,30 @@ document.getElementById("clearCart").onclick = () => {
   updateCartBadge();
 };
 
+if (checkoutBtn) {
+  checkoutBtn.onclick = () => {
+    if (!isAuthed()) {
+      alert('Please log in to checkout.');
+      window.location.href = 'login.html';
+      return;
+    }
+    const hasItems = Object.keys(getCart()).length > 0;
+    if (!hasItems) {
+      alert('Your cart is empty.');
+      return;
+    }
+    window.location.href = 'payment.html';
+  };
+}
+
 updateCartBadge();
+
+function isAuthed() {
+  try {
+    const session = localStorage.getItem('ph_session');
+    const user = typeof getUser === 'function' ? getUser() : null;
+    return !!(session && user);
+  } catch (e) {
+    return false;
+  }
+}

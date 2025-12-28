@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | ProductHub Lite</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="js/auth.js"></script>
+    <script src="auth.js"></script>
 </head>
 <body class="bg-slate-50">
 
@@ -14,15 +14,16 @@
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
 
             <a href="index.html" class="flex items-center gap-2">
-                <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">
-                    PH
-                </div>
-                <span class="font-semibold text-lg">ProductHub Lite</span>
+              <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">
+                TB
+              </div>
+              <span class="font-semibold text-lg">Tasty Buds</span>
             </a>
 
              <nav class="flex items-center gap-6 text-sm">
                 <a href="index.html" class="hover:text-black text-slate-600">Home</a>
                 <a href="about.html" class="hover:text-black text-slate-600">About</a>
+               <a href="orders.html" class="hover:text-black text-slate-600">Orders</a>
 
                 <span id="guestLinks" class="flex gap-4">
                     <a href="login.html" class="hover:text-black text-slate-600">Login</a>
@@ -59,11 +60,15 @@
 
   <script>
     document.getElementById("loginForm")
-    .addEventListener("submit", e => {
+    .addEventListener("submit", async e => {
       e.preventDefault();
-      const email = e.target[0].value;
-      login();
-      window.location.href = "index.html";
+      const ok = await login();
+      if (ok) {
+        console.log('Login succeeded — redirecting in 1.5s');
+        setTimeout(() => window.location.href = "index.html", 1500);
+      } else {
+        console.log('Login failed');
+      }
     });
   </script>
 

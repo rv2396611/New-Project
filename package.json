@@ -1,0 +1,28 @@
+{
+  "name": "tasty-buds",
+  "version": "1.0.0",
+  "description": "A modern street-food ordering app with authentication, cart, and secure payment handling.",
+  "author": "Tasty Buds Team",
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test_auth_runner.js"
+  },
+  "keywords": [
+    "food",
+    "ordering",
+    "auth",
+    "payment",
+    "express"
+  ],
+  "dependencies": {
+    "argon2": "^0.30.0",
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

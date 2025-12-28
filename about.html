@@ -3,25 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About - ProductHub Lite</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="js/auth.js"></script>
+        <title>About - Tasty Buds</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+        <script src="auth.js"></script>
+        <style>
+            body {
+                font-family: "Space Grotesk", "Segoe UI", sans-serif;
+                background: radial-gradient(circle at 20% 20%, rgba(59,130,246,0.08), transparent 25%),
+                                        radial-gradient(circle at 80% 0%, rgba(16,185,129,0.12), transparent 28%),
+                                        linear-gradient(180deg, #0b1224 0%, #0f172a 32%, #0f172a 100%);
+                color: #0f172a;
+            }
+            .card-surface {
+                background: #ffffff;
+                border: 1px solid rgba(15, 23, 42, 0.08);
+                box-shadow: 0 25px 60px rgba(15, 23, 42, 0.14);
+            }
+            .ghost-chip {
+                border: 1px solid rgba(255,255,255,0.5);
+                color: #e2e8f0;
+                background: rgba(255,255,255,0.08);
+            }
+            .accent-pill {
+                background: linear-gradient(120deg, #10b981 0%, #22c55e 50%, #0ea5e9 100%);
+                color: #0b1224;
+            }
+        </style>
 </head>
 <body>
-    
-    <header class="bg-white border-b sticky top-0 z-50">
+
+    <header class="bg-white/95 backdrop-blur border-b sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
 
             <a href="index.html" class="flex items-center gap-2">
                 <div class="h-9 w-9 bg-slate-900 text-white grid place-items-center rounded-lg font-bold">
-                    PH
+                    TB
                 </div>
-                <span class="font-semibold text-lg">ProductHub Lite</span>
+                <span class="font-semibold text-lg">Tasty Buds</span>
             </a>
 
              <nav class="flex items-center gap-6 text-sm">
                 <a href="index.html" class="hover:text-black text-slate-600">Home</a>
                 <a href="about.html" class="hover:text-black text-slate-600">About</a>
+                     <a href="orders.html" class="hover:text-black text-slate-600">Orders</a>
 
                 <span id="guestLinks" class="flex gap-4">
                     <a href="login.html" class="hover:text-black text-slate-600">Login</a>
@@ -39,30 +66,44 @@
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 py-10">
-        <h1 class="text-3xl font-bold mb-4">About ProductHub Lite</h1>
-
-        <p class="text-slate-600 leading-relaxed mb-6">
-            ProductHub Lite is a demonstration e-commerce platform built using
-            modern frontend practices with Tailwind CSS and Vanilla JavaScript.
-        </p>
-
-        <div class="grid md:grid-cols-3 gap-6">
-            <div class="p-5 border rounded-xl">
-            <h3 class="font-semibold mb-2">Fast UI</h3>
-            <p class="text-sm text-slate-600">Utility-first CSS with Tailwind.</p>
+    <main class="max-w-6xl mx-auto px-4 py-12 text-slate-50">
+        <section class="card-surface rounded-3xl p-8 sm:p-10 mb-8 text-slate-900">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+                <span class="accent-pill px-3 py-1.5 rounded-full text-sm font-semibold">Neighborhood favorite</span>
+                <span class="ghost-chip px-3 py-1.5 rounded-full text-sm">Chef-crafted fusion</span>
             </div>
-
-            <div class="p-5 border rounded-xl">
-            <h3 class="font-semibold mb-2">No Framework</h3>
-            <p class="text-sm text-slate-600">Pure JavaScript for logic.</p>
+            <h1 class="text-3xl sm:text-4xl font-bold mb-4">Tasty Buds is for people who love street-food energy and crave quality, fast.</h1>
+            <p class="text-lg text-slate-600 mb-6">We blend bold spices, seasonal produce, and comfort classics into dishes that travel well and arrive hot. Our kitchen moves like a street cart: focused, fast, and full of personality.</p>
+            <div class="grid sm:grid-cols-3 gap-4 text-slate-800">
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                    <p class="text-sm text-slate-500">Chef favorites</p>
+                    <p class="text-xl font-semibold">12 rotating picks</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                    <p class="text-sm text-slate-500">Speed to door</p>
+                    <p class="text-xl font-semibold">~25 minutes avg</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                    <p class="text-sm text-slate-500">Happy regulars</p>
+                    <p class="text-xl font-semibold">2,000+ weekly</p>
+                </div>
             </div>
+        </section>
 
-            <div class="p-5 border rounded-xl">
-            <h3 class="font-semibold mb-2">Real Patterns</h3>
-            <p class="text-sm text-slate-600">Auth, cart, state, UX.</p>
+        <section class="grid md:grid-cols-3 gap-6">
+            <div class="card-surface rounded-2xl p-6">
+                <h3 class="font-semibold text-lg mb-2 text-slate-900">Craft & Sourcing</h3>
+                <p class="text-sm text-slate-600">House-made masalas, daily veggies, and trusted local suppliers so flavors stay bright.</p>
             </div>
-        </div>
+            <div class="card-surface rounded-2xl p-6">
+                <h3 class="font-semibold text-lg mb-2 text-slate-900">Fast, Not Rushed</h3>
+                <p class="text-sm text-slate-600">Streamlined prep and smart batching without compromising on texture or heat.</p>
+            </div>
+            <div class="card-surface rounded-2xl p-6">
+                <h3 class="font-semibold text-lg mb-2 text-slate-900">Service with Heart</h3>
+                <p class="text-sm text-slate-600">Clear communication, quick fixes, and reliable deliveries—because you’re hungry now.</p>
+            </div>
+        </section>
     </main>
 
 
